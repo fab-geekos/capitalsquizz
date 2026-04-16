@@ -276,7 +276,7 @@ body::before{
   <div class="home-hero">
     <span class="emoji">🌍</span>
     <h1>Capitales du Monde</h1>
-    <p>Apprends et teste tes connaissances sur les 195 capitales de la planète.</p>
+    <p>Apprends et teste tes connaissances sur les 198 capitales de la planète.</p>
   </div>
   <div class="home-cards">
     <div class="home-card" onclick="showPicker('list')">
@@ -289,7 +289,7 @@ body::before{
       <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
       <div class="card-icon">🧠</div>
       <h2>Quiz</h2>
-      <p>Teste-toi sur un continent ou sur les 195 pays du monde.</p>
+      <p>Teste-toi sur un continent ou sur les 198 pays du monde.</p>
     </div>
   </div>
 </div>
@@ -356,28 +356,29 @@ body::before{
 
 <script>
 // ═══════════════════════════════
-//  DATA — 195 countries
+//  DATA — 198 countries
 // ═══════════════════════════════
 const CONTINENTS = {
-  "Europe": {icon:"🇪🇺", data:[
+  "Europe": {icon:"🏛️", data:[
     ["Albanie","Tirana"],["Allemagne","Berlin"],["Andorre","Andorre-la-Vieille"],
-    ["Autriche","Vienne"],["Belgique","Bruxelles"],["Biélorussie","Minsk"],
-    ["Bosnie-Herzégovine","Sarajevo"],["Bulgarie","Sofia"],["Chypre","Nicosie"],
-    ["Croatie","Zagreb"],["Danemark","Copenhague"],["Espagne","Madrid"],
-    ["Estonie","Tallinn"],["Finlande","Helsinki"],["France","Paris"],
-    ["Grèce","Athènes"],["Hongrie","Budapest"],["Irlande","Dublin"],
+    ["Angleterre","Londres"],["Autriche","Vienne"],["Belgique","Bruxelles"],
+    ["Biélorussie","Minsk"],["Bosnie-Herzégovine","Sarajevo"],["Bulgarie","Sofia"],
+    ["Chypre","Nicosie"],["Croatie","Zagreb"],["Danemark","Copenhague"],
+    ["Écosse","Édimbourg"],["Espagne","Madrid"],["Estonie","Tallinn"],
+    ["Finlande","Helsinki"],["France","Paris"],["Grèce","Athènes"],
+    ["Hongrie","Budapest"],["Irlande","Dublin"],["Irlande du Nord","Belfast"],
     ["Islande","Reykjavik"],["Italie","Rome"],["Kosovo","Pristina"],
     ["Lettonie","Riga"],["Liechtenstein","Vaduz"],["Lituanie","Vilnius"],
     ["Luxembourg","Luxembourg"],["Macédoine du Nord","Skopje"],["Malte","La Valette"],
     ["Moldavie","Chișinău"],["Monaco","Monaco"],["Monténégro","Podgorica"],
-    ["Norvège","Oslo"],["Pays-Bas","Amsterdam"],["Pologne","Varsovie"],
-    ["Portugal","Lisbonne"],["République tchèque","Prague"],["Roumanie","Bucarest"],
-    ["Royaume-Uni","Londres"],["Russie","Moscou"],["Saint-Marin","Saint-Marin"],
+    ["Norvège","Oslo"],["Pays de Galles","Cardiff"],["Pays-Bas","Amsterdam"],
+    ["Pologne","Varsovie"],["Portugal","Lisbonne"],["République tchèque","Prague"],
+    ["Roumanie","Bucarest"],["Russie","Moscou"],["Saint-Marin","Saint-Marin"],
     ["Serbie","Belgrade"],["Slovaquie","Bratislava"],["Slovénie","Ljubljana"],
     ["Suède","Stockholm"],["Suisse","Berne"],["Turquie","Ankara"],
     ["Ukraine","Kiev"],["Vatican","Vatican"]
   ]},
-  "Amérique du Nord & Centrale": {icon:"🌎", data:[
+  "Amérique du Nord & Centrale": {icon:"🍁", data:[
     ["Antigua-et-Barbuda","Saint John's"],["Bahamas","Nassau"],["Barbade","Bridgetown"],
     ["Belize","Belmopan"],["Canada","Ottawa"],["Costa Rica","San José"],
     ["Cuba","La Havane"],["Dominique","Roseau"],["El Salvador","San Salvador"],
@@ -389,13 +390,13 @@ const CONTINENTS = {
     ["Saint-Vincent-et-les-Grenadines","Kingstown"],
     ["Trinité-et-Tobago","Port-d'Espagne"]
   ]},
-  "Amérique du Sud": {icon:"🌎", data:[
+  "Amérique du Sud": {icon:"🦙", data:[
     ["Argentine","Buenos Aires"],["Bolivie","Sucre"],["Brésil","Brasília"],
     ["Chili","Santiago"],["Colombie","Bogotá"],["Équateur","Quito"],
     ["Guyana","Georgetown"],["Paraguay","Asunción"],["Pérou","Lima"],
     ["Suriname","Paramaribo"],["Uruguay","Montevideo"],["Venezuela","Caracas"]
   ]},
-  "Asie": {icon:"🌏", data:[
+  "Asie": {icon:"⛩️", data:[
     ["Afghanistan","Kaboul"],["Arabie saoudite","Riyad"],["Arménie","Erevan"],
     ["Azerbaïdjan","Bakou"],["Bahreïn","Manama"],["Bangladesh","Dacca"],
     ["Bhoutan","Thimphou"],["Brunei","Bandar Seri Begawan"],["Cambodge","Phnom Penh"],
@@ -412,7 +413,7 @@ const CONTINENTS = {
     ["Tadjikistan","Douchanbé"],["Thaïlande","Bangkok"],["Timor oriental","Dili"],
     ["Turkménistan","Achgabat"],["Vietnam","Hanoï"],["Yémen","Sanaa"]
   ]},
-  "Afrique": {icon:"🌍", data:[
+  "Afrique": {icon:"🐘", data:[
     ["Afrique du Sud","Pretoria"],["Algérie","Alger"],["Angola","Luanda"],
     ["Bénin","Porto-Novo"],["Botswana","Gaborone"],["Burkina Faso","Ouagadougou"],
     ["Burundi","Gitega"],["Cameroun","Yaoundé"],["Cap-Vert","Praia"],
@@ -434,7 +435,7 @@ const CONTINENTS = {
     ["Tanzanie","Dodoma"],["Tchad","N'Djamena"],["Togo","Lomé"],
     ["Tunisie","Tunis"],["Zimbabwe","Harare"],["Zambie","Lusaka"]
   ]},
-  "Océanie": {icon:"🏝️", data:[
+  "Océanie": {icon:"🦘", data:[
     ["Australie","Canberra"],["Fidji","Suva"],["Îles Marshall","Majuro"],
     ["Îles Salomon","Honiara"],["Kiribati","Tarawa-Sud"],["Micronésie","Palikir"],
     ["Nauru","Yaren"],["Nouvelle-Zélande","Wellington"],["Palaos","Ngerulmud"],
@@ -482,7 +483,6 @@ function goBack(){
   if(navHistory.length > 0){
     const prev = navHistory.pop();
     showScreen(prev, false);
-    // Update top bar based on destination
     if(prev === 'screenHome'){
       updateTopRight('');
     } else if(prev === 'screenPicker'){
@@ -527,7 +527,7 @@ function showPicker(intent){
   });
   if(intent==='quiz'){
     html+=`<div class="continent-btn full-width" onclick="startQuiz('all')" style="border-color:rgba(240,192,64,0.3);background:rgba(240,192,64,0.05)">
-      <div class="c-icon">🌐</div>
+      <div class="c-icon">🗺️</div>
       <div class="c-info"><span class="c-name" style="color:var(--accent)">Tous les pays</span><span class="c-count">${ALL_DATA.length} pays — mode expert</span></div>
     </div>`;
   }
