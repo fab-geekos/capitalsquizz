@@ -690,6 +690,20 @@ document.addEventListener('keydown',function(e){
     document.getElementById('submitBtn').click();
   }
 });
+
+// ═══════════════════════════════
+//  MOUSE SIDE BUTTONS (précédent/suivant)
+// ═══════════════════════════════
+document.addEventListener('mousedown', function(e){
+  // button 3 = bouton latéral "précédent" (généralement actionné par le pouce)
+  if(e.button === 3){
+    const homeActive = document.getElementById('screenHome').classList.contains('active');
+    if(!homeActive){
+      e.preventDefault();
+      goBack();
+    }
+  }
+});
 </script>
 </body>
 </html>
