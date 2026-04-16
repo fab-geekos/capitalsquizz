@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
+[hidden]{display:none !important}
 :root{
   --bg:#0b1120;--card:#131b2e;--border:#1e2a45;
   --accent:#f0c040;--accent2:#e8a020;--green:#34d399;--red:#f87171;
@@ -45,6 +46,7 @@ body::before{
   z-index:100;background:linear-gradient(180deg,var(--bg) 70%,transparent);
 }
 .top-bar .logo{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--accent);cursor:pointer;letter-spacing:.5px}
+.top-right{display:flex;align-items:center;gap:10px}
 .score-display{
   display:flex;align-items:center;gap:10px;
   background:var(--card);border:1px solid var(--border);
@@ -268,7 +270,17 @@ body::before{
 <!-- TOP BAR -->
 <div class="top-bar" id="topBar">
   <span class="logo" onclick="goHome()">🌍 Capitales du Monde</span>
-  <div id="topRight" style="display:flex;align-items:center;gap:10px"></div>
+  <div class="top-right">
+    <button class="back-btn" id="backBtn" onclick="goBack()" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Retour
+    </button>
+    <div class="score-display" id="scoreDisplay" hidden>
+      <span class="correct" id="goodCount">0</span>
+      <span class="sep">/</span>
+      <span class="total-num" id="totalCount">0</span>
+    </div>
+  </div>
 </div>
 
 <!-- ═══ HOME ═══ -->
@@ -327,7 +339,7 @@ body::before{
       <div class="question-text" id="questionText">—</div>
       <div class="input-row">
         <input type="text" id="answerInput" placeholder="Ta réponse…" autocomplete="off" spellcheck="false">
-        <button id="submitBtn" onclick="checkAnswer()">Valider</button>
+        <button id="submitBtn">Valider</button>
       </div>
       <div class="feedback" id="feedback"></div>
     </div>
@@ -359,7 +371,7 @@ body::before{
 //  DATA — 198 countries
 // ═══════════════════════════════
 const CONTINENTS = {
-  "Europe": {icon:"🏛️", data:[
+  "Europe": {icon:"🐓", data:[
     ["Albanie","Tirana"],["Allemagne","Berlin"],["Andorre","Andorre-la-Vieille"],
     ["Angleterre","Londres"],["Autriche","Vienne"],["Belgique","Bruxelles"],
     ["Biélorussie","Minsk"],["Bosnie-Herzégovine","Sarajevo"],["Bulgarie","Sofia"],
@@ -378,7 +390,7 @@ const CONTINENTS = {
     ["Suède","Stockholm"],["Suisse","Berne"],["Turquie","Ankara"],
     ["Ukraine","Kiev"],["Vatican","Vatican"]
   ]},
-  "Amérique du Nord & Centrale": {icon:"🍁", data:[
+  "Amérique du Nord & Centrale": {icon:"🦬", data:[
     ["Antigua-et-Barbuda","Saint John's"],["Bahamas","Nassau"],["Barbade","Bridgetown"],
     ["Belize","Belmopan"],["Canada","Ottawa"],["Costa Rica","San José"],
     ["Cuba","La Havane"],["Dominique","Roseau"],["El Salvador","San Salvador"],
@@ -396,7 +408,7 @@ const CONTINENTS = {
     ["Guyana","Georgetown"],["Paraguay","Asunción"],["Pérou","Lima"],
     ["Suriname","Paramaribo"],["Uruguay","Montevideo"],["Venezuela","Caracas"]
   ]},
-  "Asie": {icon:"⛩️", data:[
+  "Asie": {icon:"🐼", data:[
     ["Afghanistan","Kaboul"],["Arabie saoudite","Riyad"],["Arménie","Erevan"],
     ["Azerbaïdjan","Bakou"],["Bahreïn","Manama"],["Bangladesh","Dacca"],
     ["Bhoutan","Thimphou"],["Brunei","Bandar Seri Begawan"],["Cambodge","Phnom Penh"],
@@ -452,52 +464,38 @@ const ALL_DATA = Object.values(CONTINENTS).flatMap(c => c.data);
 let quizPool=[], good=0, total=0, streak=0, wrongs=[], quizTotal=0;
 let currentCountry, currentCapital, mode;
 let _quizKey = '';
-let navHistory = [];
+let previousScreen = null;
+let awaitingAnswer = true;
 
 // ═══════════════════════════════
 //  NAVIGATION
 // ═══════════════════════════════
-const backSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>';
-
-function showScreen(id, addToHistory){
-  if(addToHistory !== false){
-    const cur = document.querySelector('.screen.active');
-    if(cur) navHistory.push(cur.id);
-  }
+function navigateTo(id, rememberPrevious){
+  const cur = document.querySelector('.screen.active');
+  if(rememberPrevious && cur) previousScreen = cur.id;
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  document.getElementById('backBtn').hidden = (id === 'screenHome');
   window.scrollTo(0,0);
-}
-
-function updateTopRight(content){
-  document.getElementById('topRight').innerHTML = content || '';
-}
-
-function showBackBtn(extra){
-  const parts = '<button class="back-btn" onclick="goBack()">'+backSvg+' Retour</button>';
-  updateTopRight(extra ? parts + extra : parts);
 }
 
 function goBack(){
   document.getElementById('streakBar').style.opacity='0';
-  if(navHistory.length > 0){
-    const prev = navHistory.pop();
-    showScreen(prev, false);
-    if(prev === 'screenHome'){
-      updateTopRight('');
-    } else if(prev === 'screenPicker'){
-      showBackBtn();
-    }
+  document.getElementById('scoreDisplay').hidden = true;
+  if(previousScreen){
+    const prev = previousScreen;
+    previousScreen = null;
+    navigateTo(prev, false);
   } else {
     goHome();
   }
 }
 
 function goHome(){
-  navHistory = [];
-  showScreen('screenHome', false);
-  updateTopRight('');
+  previousScreen = null;
+  document.getElementById('scoreDisplay').hidden = true;
   document.getElementById('streakBar').style.opacity='0';
+  navigateTo('screenHome', false);
 }
 
 // ═══════════════════════════════
@@ -532,8 +530,7 @@ function showPicker(intent){
     </div>`;
   }
   grid.innerHTML=html;
-  showScreen('screenPicker');
-  showBackBtn();
+  navigateTo('screenPicker', true);
 }
 
 // ═══════════════════════════════
@@ -550,8 +547,7 @@ function showList(continent){
       <td class="country-name">${row[0]}</td><td class="capital-name">${row[1]}</td></tr>`;
   });
   document.getElementById('listBody').innerHTML=html;
-  showScreen('screenList');
-  showBackBtn();
+  navigateTo('screenList', true);
 }
 
 // ═══════════════════════════════
@@ -572,21 +568,18 @@ function startQuiz(key){
   document.getElementById('quizTitle').textContent=
     key==='all'?'Quiz Global — '+ALL_DATA.length+' pays':'Quiz '+key;
 
-  const scoreHtml = `<div class="score-display">
-      <span class="correct" id="goodCount">0</span>
-      <span class="sep">/</span>
-      <span class="total-num" id="totalCount">0</span>
-    </div>`;
-  showBackBtn(scoreHtml);
+  document.getElementById('goodCount').textContent='0';
+  document.getElementById('totalCount').textContent='0';
+  document.getElementById('scoreDisplay').hidden = false;
 
   document.getElementById('quizArea').style.display='';
   document.getElementById('resultsScreen').classList.remove('show');
   document.getElementById('answerInput').disabled=false;
   document.getElementById('submitBtn').textContent='Valider';
-  document.getElementById('submitBtn').onclick=checkAnswer;
   document.getElementById('streakBar').style.opacity='0';
+  awaitingAnswer = true;
 
-  showScreen('screenQuiz');
+  navigateTo('screenQuiz', true);
   nextQuestion();
 }
 
@@ -604,6 +597,17 @@ function nextQuestion(){
   document.getElementById('questionText').textContent=mode===0?currentCountry:currentCapital;
   document.getElementById('answerInput').value='';
   document.getElementById('answerInput').focus();
+}
+
+function handleSubmit(){
+  if(awaitingAnswer){
+    checkAnswer();
+  } else {
+    awaitingAnswer = true;
+    document.getElementById('answerInput').disabled = false;
+    document.getElementById('submitBtn').textContent = 'Valider';
+    nextQuestion();
+  }
 }
 
 function checkAnswer(){
@@ -642,12 +646,49 @@ function checkAnswer(){
 
   document.getElementById('answerInput').disabled=true;
   document.getElementById('submitBtn').textContent='Suivant →';
-  document.getElementById('submitBtn').onclick=function(){
-    document.getElementById('answerInput').disabled=false;
-    document.getElementById('submitBtn').textContent='Valider';
-    document.getElementById('submitBtn').onclick=checkAnswer;
-    nextQuestion();
-  };
+  awaitingAnswer = false;
+}
+
+function renderResultsBody(){
+  const body=document.getElementById('resultsBody');
+  body.innerHTML='';
+
+  if(wrongs.length===0){
+    const div=document.createElement('div');
+    div.className='results-perfect';
+    div.textContent='✨ Aucune erreur, sans faute !';
+    body.appendChild(div);
+    return;
+  }
+
+  const table=document.createElement('table');
+  table.className='results-table';
+  table.innerHTML='<thead><tr><th>Question</th><th>Ta réponse</th><th>Bonne réponse</th></tr></thead>';
+  const tbody=document.createElement('tbody');
+
+  wrongs.forEach(w=>{
+    const tr=document.createElement('tr');
+
+    const td1=document.createElement('td');
+    td1.append(w.modeLabel+' ');
+    const strong=document.createElement('strong');
+    strong.textContent=w.question;
+    td1.appendChild(strong);
+
+    const td2=document.createElement('td');
+    td2.className='your-answer';
+    td2.textContent=w.yourAnswer;
+
+    const td3=document.createElement('td');
+    td3.className='correct-answer';
+    td3.textContent=w.correctAnswer;
+
+    tr.append(td1,td2,td3);
+    tbody.appendChild(tr);
+  });
+
+  table.appendChild(tbody);
+  body.appendChild(table);
 }
 
 function quitQuiz(){
@@ -658,44 +699,31 @@ function quitQuiz(){
   screen.classList.add('show');
 
   const pct=total>0?Math.round(good/total*100):0;
-  const finished=quizPool.length===0&&total===quizTotal;
+  const finished=total===quizTotal;
   document.getElementById('resultsTitle').textContent=
     finished&&pct===100?'Parfait !':(pct>=80?'Bravo !':pct>=50?'Pas mal !':"Continue à t'entraîner !");
   document.getElementById('resultsSummary').textContent=
     good+' bonne'+(good>1?'s':'')+' réponse'+(good>1?'s':'')+' sur '+total+' ('+pct+'%)'
     +(finished?' — Quiz terminé !':'');
 
-  const body=document.getElementById('resultsBody');
-  if(wrongs.length===0){
-    body.innerHTML='<div class="results-perfect">✨ Aucune erreur, sans faute !</div>';
-  } else {
-    let html='<table class="results-table"><thead><tr><th>Question</th><th>Ta réponse</th><th>Bonne réponse</th></tr></thead><tbody>';
-    wrongs.forEach(w=>{
-      html+='<tr><td>'+w.modeLabel+' <strong>'+w.question+'</strong></td>'+
-        '<td class="your-answer">'+w.yourAnswer+'</td>'+
-        '<td class="correct-answer">'+w.correctAnswer+'</td></tr>';
-    });
-    html+='</tbody></table>';
-    body.innerHTML=html;
-  }
+  renderResultsBody();
 }
 
 function restartQuiz(){startQuiz(_quizKey)}
 
 // ═══════════════════════════════
-//  GLOBAL ENTER KEY
+//  EVENT LISTENERS
 // ═══════════════════════════════
+document.getElementById('submitBtn').addEventListener('click', handleSubmit);
+
 document.addEventListener('keydown',function(e){
   if(e.key==='Enter'&&document.getElementById('screenQuiz').classList.contains('active')){
-    document.getElementById('submitBtn').click();
+    handleSubmit();
   }
 });
 
-// ═══════════════════════════════
-//  MOUSE SIDE BUTTONS (précédent/suivant)
-// ═══════════════════════════════
+// Boutons latéraux souris (précédent)
 document.addEventListener('mousedown', function(e){
-  // button 3 = bouton latéral "précédent" (généralement actionné par le pouce)
   if(e.button === 3){
     const homeActive = document.getElementById('screenHome').classList.contains('active');
     if(!homeActive){
