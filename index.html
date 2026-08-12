@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="color-scheme" content="dark light">
+<meta name="color-scheme" content="light dark">
 <title>Capitales du Monde</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -17,28 +17,32 @@
    Même convention que todo, citations-livres et archipel : classe `dark` sur
    <body>, clé `<projet>_theme` dans localStorage, bouton rond 🌙 / ☀️ en haut
    à droite.
-   Seule différence assumée : ici le SOMBRE reste le défaut, c'est l'identité
-   de l'app (ciel de nuit et or). Pour inverser, changer le `!== "light"` en
-   `=== "dark"` dans le petit script en tête de <body> et dans initTheme().
    Les jetons sont posés sur <body> et non sur :root pour que les teintes
    dérivées plus bas se recalculent bien dans les deux modes.
    ────────────────────────────────────────────────────────────────────────── */
 
-/* Mode clair : ciel de jour. Bleu très pâle, encre bleu nuit, or bronze. */
+/* Mode clair (défaut) : la palette de todo, reprise à l'identique pour que les
+   projets se ressemblent. C'est bien la référence maison, son mode sombre est
+   déjà celui de ce quiz (#0b1120 / #131b2e).
+   Seule valeur retouchée : le vert. Celui de todo (#2D936C) n'y sert qu'à des
+   pastilles ; ici il porte du TEXTE (bonnes réponses, score), et il ne donnait
+   que 3,8:1 sur blanc. Assombri d'un cran, même vert, 5,3:1. */
 body{
-  --bg:#f4f7fc;--card:#ffffff;--border:#d7e1ef;
-  --accent:#8a6208;--accent2:#6d4d05;--green:#0a7250;--red:#c0322b;
-  --text:#1b2740;--muted:#54637d;--input-bg:#ffffff;
-  --strong:#0d1830;
-  --row-line:rgba(90,110,140,.28);
-  --shadow-hover:rgba(25,45,85,.16);
+  --bg:#fafafa;--card:#ffffff;--border:#ececec;
+  --accent:#4A6FA5;--accent2:#3d5c88;--green:#22795a;--red:#D62828;
+  --text:#2C3E50;--muted:#6b7280;--input-bg:#ffffff;
+  --strong:#2C3E50;
+  --row-line:rgba(44,62,80,.12);
+  --shadow-hover:rgba(44,62,80,.14);
 }
 
-/* Mode sombre : l'apparence d'origine, inchangée. */
+/* Mode sombre : l'apparence d'origine du quiz, inchangée. */
 body.dark{
   --bg:#0b1120;--card:#131b2e;--border:#1e2a45;
   --accent:#f0c040;--accent2:#e8a020;--green:#34d399;--red:#f87171;
-  --text:#e2e8f0;--muted:#64748b;--input-bg:#0f172a;
+  /* --muted aligné sur celui de todo : #64748b ne donnait que 3,6:1 sur les
+     cartes. Todo avait exactement le même et l'a éclairci pour passer AA. */
+  --text:#e2e8f0;--muted:#94a3b8;--input-bg:#0f172a;
   --strong:#ffffff;
   --row-line:var(--row-line);
   --shadow-hover:var(--shadow-hover);
@@ -201,7 +205,9 @@ body::before{
 .badge{
   display:inline-flex;align-items:center;gap:6px;
   background:var(--accent-10);border:1px solid var(--accent-20);
-  padding:6px 16px;border-radius:20px;font-size:.78rem;color:var(--accent);
+  /* --accent2 et non --accent : sur son propre fond teinté, l'accent clair ne
+     donnait que 4,35:1 pour un texte de 0,78rem. */
+  padding:6px 16px;border-radius:20px;font-size:.78rem;color:var(--accent2);
   font-weight:500;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px;
 }
 .badge .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s ease infinite}
@@ -314,8 +320,8 @@ body::before{
 </head>
 <body>
 <!-- Le thème est appliqué avant le premier rendu, sinon la page clignoterait
-     en clair avant de passer en sombre. Sombre par défaut ici. -->
-<script>if(localStorage.getItem("capitales_theme")!=="light")document.body.classList.add("dark");</script>
+     avant de basculer. Clair par défaut, comme les autres projets. -->
+<script>if(localStorage.getItem("capitales_theme")==="dark")document.body.classList.add("dark");</script>
 
 <div class="globe-bg"></div>
 
@@ -333,7 +339,7 @@ body::before{
       <span class="total-num" id="totalCount">0</span>
     </div>
     <button class="icon-btn" id="themeToggle" onclick="toggleTheme()"
-            aria-label="Changer de thème" title="Mode clair / sombre">☀️</button>
+            aria-label="Changer de thème" title="Mode clair / sombre">🌙</button>
   </div>
 </div>
 
@@ -769,8 +775,7 @@ function restartQuiz(){startQuiz(_quizKey)}
 //  THÈME CLAIR / SOMBRE
 // ═══════════════════════════════
 // Même convention que todo, citations-livres et archipel : classe `dark` sur
-// <body>, clé `<projet>_theme`. Seule différence : le sombre reste le défaut
-// ici, c'est l'identité de l'app.
+// <body>, clé `<projet>_theme`, clair par défaut.
 const THEME_KEY = 'capitales_theme';
 
 function setTheme(dark){
@@ -786,7 +791,7 @@ function toggleTheme(){
 }
 
 initTheme();
-function initTheme(){ setTheme(localStorage.getItem(THEME_KEY) !== 'light'); }
+function initTheme(){ setTheme(localStorage.getItem(THEME_KEY) === 'dark'); }
 
 // ═══════════════════════════════
 //  EVENT LISTENERS
