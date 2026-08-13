@@ -105,7 +105,7 @@ body{
   font-size:.85rem;cursor:pointer;padding:7px 14px;border-radius:20px;
   transition:all .2s;font-weight:500;
 }
-.back-btn:hover{background:var(--hover);border-color:var(--success);color:var(--text)}
+.back-btn:hover{background:var(--hover);border-color:var(--success);color:var(--text);box-shadow:0 0 0 1px var(--success)}
 .back-btn svg{width:16px;height:16px}
 /* Bouton de thème : le rond de todo, 40px avec son ombre. */
 .icon-btn{
@@ -137,8 +137,8 @@ body{
 }
 /* Le vert entoure : une arête qui s'allume au survol dit « ceci est visé ».
    Explorer porte le cadre au repos : c'est la porte d'entree proposee. */
-.home-card:hover{border-color:var(--success)}
-.home-cards .home-card:first-child{border-color:var(--success)}
+.home-card:hover{border-color:var(--success);box-shadow:0 0 0 1px var(--success),var(--shadow)}
+.home-cards .home-card:first-child{border-color:var(--success);box-shadow:0 0 0 1px var(--success),var(--shadow)}
 .home-card .card-icon{font-size:2rem}
 .home-card h2{font-size:1.2rem;font-weight:700;color:var(--text)}
 .home-card p{font-size:.85rem;color:var(--muted);line-height:1.5}
@@ -169,7 +169,7 @@ body{
 .continent-btn:nth-child(5){animation-delay:.25s}
 .continent-btn:nth-child(6){animation-delay:.3s}
 .continent-btn:nth-child(7){animation-delay:.35s}
-.continent-btn:hover{border-color:var(--success)}
+.continent-btn:hover{border-color:var(--success);box-shadow:0 0 0 1px var(--success),var(--shadow)}
 .continent-btn .c-icon{font-size:1.6rem;width:40px;text-align:center}
 .continent-btn .c-info{display:flex;flex-direction:column;gap:2px}
 .continent-btn .c-name{font-weight:600;font-size:1rem;color:var(--text)}
@@ -303,7 +303,7 @@ body{
   font-size:1rem;cursor:pointer;font-family:'Outfit',sans-serif;
   transition:background .15s,color .15s,border-color .15s;
 }
-.home-btn:hover{background:var(--hover);color:var(--text);border-color:var(--success)}
+.home-btn:hover{background:var(--hover);color:var(--text);border-color:var(--success);box-shadow:0 0 0 1px var(--success)}
 
 .streak{
   position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
