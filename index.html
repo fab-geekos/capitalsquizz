@@ -36,7 +36,7 @@ body{
      posés sur la page, et lui doit s'éclaircir : #4A6FA5 sur #0b1120 ne donne
      que 3,7:1. */
   --accent-text:#4A6FA5;
-  --success:#2D936C;--red:#D62828;
+  --success:#2D936C;--red-strong:#D62828;
   --text:#2C3E50;--muted:#6b7280;--input-bg:#ffffff;
   --row-line:rgba(44,62,80,.12);
   --shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
@@ -48,7 +48,7 @@ body{
 body.dark{
   --bg:#0b1120;--card:#131b2e;--border:#1e293b;--hover:#1a2438;
   --accent-text:#7FA3D8;
-  --success:#6fb39d;--red:#F26D6D;
+  --success:#6fb39d;--red-strong:#F26D6D;
   --text:#e2e8f0;--muted:#94a3b8;--input-bg:#0f172a;
   /* Ces deux jetons se référençaient eux-mêmes (--row-line:var(--row-line)).
      C'est un cycle : la valeur devenait invalide et les filets horizontaux des
@@ -65,8 +65,8 @@ body{
   --accent-20:color-mix(in srgb,var(--accent) 24%,transparent);
   --ok-tint:color-mix(in srgb,var(--success) 12%,transparent);
   --ok-line:color-mix(in srgb,var(--success) 28%,transparent);
-  --ko-tint:color-mix(in srgb,var(--red) 12%,transparent);
-  --ko-line:color-mix(in srgb,var(--red) 28%,transparent);
+  --ko-tint:color-mix(in srgb,var(--red-strong) 12%,transparent);
+  --ko-line:color-mix(in srgb,var(--red-strong) 28%,transparent);
 }
 body{
   font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);
@@ -238,7 +238,7 @@ body{
   transition:border-color .3s;animation:fadeUp .4s ease;
 }
 .card.correct-flash{border-color:var(--success);box-shadow:0 0 30px var(--ok-tint)}
-.card.wrong-flash{border-color:var(--red);box-shadow:0 0 30px var(--ko-tint)}
+.card.wrong-flash{border-color:var(--red-strong);box-shadow:0 0 30px var(--ko-tint)}
 .mode-label{font-size:.8rem;color:var(--muted);font-weight:600;margin-bottom:10px}
 .question-text{
   font-size:1.7rem;font-weight:700;
@@ -267,14 +267,14 @@ body{
 }
 .feedback.show{display:block}
 .feedback.ok{background:var(--ok-tint);border:1px solid var(--ok-line);color:var(--success)}
-.feedback.ko{background:var(--ko-tint);border:1px solid var(--ko-line);color:var(--red)}
+.feedback.ko{background:var(--ko-tint);border:1px solid var(--ko-line);color:var(--red-strong)}
 .quit-btn{
   margin-top:14px;padding:10px 24px;border-radius:10px;
   border:1px solid var(--border);background:var(--card);
   color:var(--muted);font-size:.9rem;font-family:'Outfit',sans-serif;
   cursor:pointer;transition:all .2s;font-weight:500;
 }
-.quit-btn:hover{border-color:var(--red);color:var(--red)}
+.quit-btn:hover{border-color:var(--red-strong);color:var(--red-strong)}
 
 /* ── RESULTS ── */
 .results-screen{display:none;flex-direction:column;align-items:center;gap:16px;width:100%;max-width:520px}
@@ -298,7 +298,7 @@ body{
 }
 .results-table td{padding:12px 16px;font-size:.9rem;border-bottom:1px solid var(--row-line)}
 .results-table tr:last-child td{border-bottom:none}
-.results-table .your-answer{color:var(--red);font-weight:500}
+.results-table .your-answer{color:var(--red-strong);font-weight:500}
 .results-table .correct-answer{color:var(--success);font-weight:500}
 .results-perfect{text-align:center;padding:40px 20px;color:var(--success);font-size:1.1rem}
 .action-btn{
