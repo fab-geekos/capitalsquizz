@@ -132,7 +132,7 @@ body{
 .home-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%;animation:fadeUp .6s ease .1s both}
 .home-card{
   background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
-  padding:32px 24px;cursor:pointer;transition:border-color .2s;position:relative;overflow:hidden;
+  padding:32px 24px;cursor:pointer;position:relative;overflow:hidden;
   box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px;
 }
 /* Le vert entoure : une arête qui s'allume au survol dit « ceci est visé ». */
@@ -157,7 +157,7 @@ body{
 .continent-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%}
 .continent-btn{
   background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
-  padding:20px;cursor:pointer;transition:border-color .2s;display:flex;align-items:center;gap:14px;
+  padding:20px;cursor:pointer;display:flex;align-items:center;gap:14px;
   box-shadow:var(--shadow);animation:fadeUp .4s ease both;
 }
 .continent-btn:nth-child(1){animation-delay:.05s}
@@ -167,10 +167,14 @@ body{
 .continent-btn:nth-child(5){animation-delay:.25s}
 .continent-btn:nth-child(6){animation-delay:.3s}
 .continent-btn:nth-child(7){animation-delay:.35s}
-".continent-btn:hover{border-color:var(--success);box-shadow:0 0 0 1px var(--success),var(--shadow)}
+.continent-btn:hover{border-color:var(--success);box-shadow:0 0 0 1px var(--success),var(--shadow)}
 /* Element vise au clavier. Volontairement identique au survol : il ne doit y
    avoir qu'une seule facon de dire « c'est celui-la ». Au chargement d'un
-   ecran, c'est toujours le premier, donc celui du haut a gauche. */
+   ecran, c'est toujours le premier, donc celui du haut a gauche.
+   Ni .home-card ni .continent-btn ne transitionnent leur bordure : Chrome
+   reste bloque sur l'ancienne couleur quand la classe est posee par script,
+   et le surlignage ne s'affichait jamais. Meme piege que le .no-transition
+   de voc_anglais. */
 .home-card.is-nav,.continent-btn.is-nav{
   border-color:var(--success);box-shadow:0 0 0 1px var(--success),var(--shadow);
 }
