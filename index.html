@@ -899,11 +899,17 @@ document.addEventListener('keydown', function(e){
   const enQuiz = document.getElementById('screenQuiz').classList.contains('active')
               && !document.getElementById('resultsScreen').classList.contains('show');
 
-  // Echap revient en arriere MEME pendant la saisie : c'est la seule touche
-  // qui le peut, puisque dans le champ de reponse Retour arriere efface une
-  // lettre. Sans elle, on ne pouvait pas quitter un quiz au clavier.
+  // Trois touches pour revenir, et leur portée suit ce que chacune fait dans
+  // un champ de saisie :
+  //   Échap    ne sert à rien dans un champ, donc il revient toujours ;
+  //   Suppr    efface le caractère APRÈS le curseur, or on répond en tapant à
+  //            la fin d'une ligne : il n'y a jamais rien après, donc il revient
+  //            toujours lui aussi ;
+  //   Retour arrière efface le caractère précédent, celui-là on ne le prend
+  //            jamais pendant la saisie, sinon on ne peut plus se corriger.
   const retour = e.key === 'Escape'
-              || ((e.key === 'Backspace' || e.key === 'Delete') && !enSaisie);
+              || e.key === 'Delete'
+              || (e.key === 'Backspace' && !enSaisie);
   if(retour){
     if(!document.getElementById('screenHome').classList.contains('active')){
       e.preventDefault();
