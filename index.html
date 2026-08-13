@@ -79,9 +79,9 @@ body{
    chaque écran à réserver une marge haute de compensation. Même gabarit dans
    citations-livres et voc_anglais. */
 .top-bar{
-  position:sticky;top:0;z-index:100;padding:12px 20px;
+  position:sticky;top:0;z-index:100;padding:12px 20px;min-height:64px;
   display:flex;justify-content:space-between;align-items:center;
-  background:var(--bg);
+  background:var(--card);border-bottom:1px solid var(--border);
 }
 /* Titre du projet : la seule serif de cette app. `opsz` poussé à 40 fait
    monter le contraste de Newsreader et lui donne son allure de titre. */
@@ -118,7 +118,7 @@ body{
 
 /* ── Screens ── */
 .screen{display:none;flex-direction:column;align-items:center;
-  width:100%;max-width:640px;margin:0 auto;padding:28px 20px 40px;}
+  width:100%;max-width:640px;margin:0 auto;padding:32px 20px 40px;}
 .screen.active{display:flex}
 
 /* ── HOME ── */
@@ -135,8 +135,10 @@ body{
   padding:32px 24px;cursor:pointer;transition:border-color .2s;position:relative;overflow:hidden;
   box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px;
 }
-/* Le vert entoure : une arête qui s'allume au survol dit « ceci est visé ». */
+/* Le vert entoure : une arête qui s'allume au survol dit « ceci est visé ».
+   Explorer porte le cadre au repos : c'est la porte d'entree proposee. */
 .home-card:hover{border-color:var(--success)}
+.home-cards .home-card:first-child{border-color:var(--success)}
 .home-card .card-icon{font-size:2rem}
 .home-card h2{font-size:1.2rem;font-weight:700;color:var(--text)}
 .home-card p{font-size:.85rem;color:var(--muted);line-height:1.5}
