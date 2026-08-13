@@ -9,7 +9,9 @@
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 [hidden]{display:none !important}
@@ -21,31 +23,38 @@
    dérivées plus bas se recalculent bien dans les deux modes.
    ────────────────────────────────────────────────────────────────────────── */
 
-/* Mode clair (défaut) : la palette de todo, reprise à l'identique pour que les
-   projets se ressemblent. C'est bien la référence maison, son mode sombre est
-   déjà celui de ce quiz (#0b1120 / #131b2e).
-   Seule valeur retouchée : le vert. Celui de todo (#2D936C) n'y sert qu'à des
-   pastilles ; ici il porte du TEXTE (bonnes réponses, score), et il ne donnait
-   que 3,8:1 sur blanc. Assombri d'un cran, même vert, 5,3:1. */
+/* Mode clair (défaut) : la DA commune à todo, citations-livres et voc_anglais.
+   Le fond est froid et PLAT. Avant, un dégradé radial bleu posé en haut à
+   gauche faisait paraître cette page bleue et todo beige, alors que les deux
+   avaient exactement le même #fafafa. Un fond doit être constant. */
 body{
-  --bg:#fafafa;--card:#ffffff;--border:#ececec;
-  --accent:#4A6FA5;--accent2:#3d5c88;--green:#22795a;--red:#D62828;
+  --bg:#F4F6F9;--card:#ffffff;--border:#E6EAF0;--hover:#F9FAFC;
+  --accent:#4A6FA5;--accent2:#3d5c88;
+  /* Deux bleus, et c'est obligatoire : --accent remplit les boutons (du blanc
+     dessus donne 5,1:1) et ne doit donc PAS être éclairci la nuit, sinon le
+     texte du bouton tombe à 2,6:1. --accent-text porte le texte et les icônes
+     posés sur la page, et lui doit s'éclaircir : #4A6FA5 sur #0b1120 ne donne
+     que 3,7:1. */
+  --accent-text:#4A6FA5;
+  --success:#2D936C;--red:#D62828;
   --text:#2C3E50;--muted:#6b7280;--input-bg:#ffffff;
-  --strong:#2C3E50;
   --row-line:rgba(44,62,80,.12);
-  --shadow-hover:rgba(44,62,80,.14);
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --radius:14px;
 }
 
-/* Mode sombre : l'apparence d'origine du quiz, inchangée. */
+/* Mode sombre : le bleu nuit de todo. L'accent doré d'origine est abandonné,
+   la famille n'a plus qu'un seul bleu. */
 body.dark{
-  --bg:#0b1120;--card:#131b2e;--border:#1e2a45;
-  --accent:#f0c040;--accent2:#e8a020;--green:#34d399;--red:#f87171;
-  /* --muted aligné sur celui de todo : #64748b ne donnait que 3,6:1 sur les
-     cartes. Todo avait exactement le même et l'a éclairci pour passer AA. */
+  --bg:#0b1120;--card:#131b2e;--border:#1e293b;--hover:#1a2438;
+  --accent-text:#7FA3D8;
+  --success:#6fb39d;--red:#F26D6D;
   --text:#e2e8f0;--muted:#94a3b8;--input-bg:#0f172a;
-  --strong:#ffffff;
-  --row-line:var(--row-line);
-  --shadow-hover:var(--shadow-hover);
+  /* Ces deux jetons se référençaient eux-mêmes (--row-line:var(--row-line)).
+     C'est un cycle : la valeur devenait invalide et les filets horizontaux des
+     tableaux disparaissaient purement et simplement en mode sombre. */
+  --row-line:rgba(226,232,240,.14);
+  --shadow:0 1px 3px rgba(0,0,0,.4);
 }
 
 /* Teintes dérivées : elles suivent l'accent du mode en cours, il n'y a donc
@@ -54,92 +63,82 @@ body{
   --accent-04:color-mix(in srgb,var(--accent) 6%,transparent);
   --accent-10:color-mix(in srgb,var(--accent) 12%,transparent);
   --accent-20:color-mix(in srgb,var(--accent) 24%,transparent);
-  --accent-30:color-mix(in srgb,var(--accent) 34%,transparent);
-  --ok-tint:color-mix(in srgb,var(--green) 12%,transparent);
-  --ok-line:color-mix(in srgb,var(--green) 28%,transparent);
+  --ok-tint:color-mix(in srgb,var(--success) 12%,transparent);
+  --ok-line:color-mix(in srgb,var(--success) 28%,transparent);
   --ko-tint:color-mix(in srgb,var(--red) 12%,transparent);
   --ko-line:color-mix(in srgb,var(--red) 28%,transparent);
 }
 body{
   font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);
-  min-height:100vh;overflow-x:hidden;position:relative;
+  min-height:100vh;
 }
-body::before{
-  content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;
-  background:radial-gradient(ellipse at 30% 20%,var(--accent-04) 0%,transparent 50%),
-             radial-gradient(ellipse at 70% 80%,var(--ok-tint) 0%,transparent 50%);
-  pointer-events:none;z-index:0;
-}
-.globe-bg{
-  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
-  width:600px;height:600px;border-radius:50%;
-  border:1px solid var(--accent-04);
-  opacity:.25;pointer-events:none;z-index:0;animation:spin 120s linear infinite;
-}
-.globe-bg::before,.globe-bg::after{
-  content:'';position:absolute;border-radius:50%;border:1px solid var(--accent-04);
-}
-.globe-bg::before{top:10%;left:10%;width:80%;height:80%}
-.globe-bg::after{top:25%;left:25%;width:50%;height:50%}
-@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── Top bar ── */
+/* ── Barre haute ──
+   `sticky` et non `fixed` : le titre reste visible au défilement sans obliger
+   chaque écran à réserver une marge haute de compensation. Même gabarit dans
+   citations-livres et voc_anglais. */
 .top-bar{
-  position:fixed;top:0;left:0;right:0;padding:16px 24px;
+  position:sticky;top:0;z-index:100;padding:12px 20px;
   display:flex;justify-content:space-between;align-items:center;
-  z-index:100;background:linear-gradient(180deg,var(--bg) 70%,transparent);
+  background:var(--bg);
 }
-.top-bar .logo{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--accent);cursor:pointer;letter-spacing:.5px}
+/* Titre du projet : la seule serif de cette app. `opsz` poussé à 40 fait
+   monter le contraste de Newsreader et lui donne son allure de titre. */
+.top-bar .logo{
+  font-family:'Newsreader',Georgia,serif;font-variation-settings:'opsz' 40;
+  font-size:1.15rem;font-weight:600;color:var(--accent-text);
+  cursor:pointer;letter-spacing:.5px;
+}
 .top-right{display:flex;align-items:center;gap:10px}
 .score-display{
   display:flex;align-items:center;gap:10px;
   background:var(--card);border:1px solid var(--border);
-  padding:7px 16px;border-radius:40px;font-weight:500;font-size:.9rem;
+  padding:7px 16px;border-radius:20px;font-weight:500;font-size:.9rem;
 }
-.score-display .correct{color:var(--green)}
+.score-display .correct{color:var(--success)}
 .score-display .total-num{color:var(--muted)}
 .score-display .sep{color:var(--border)}
 .back-btn{
   display:inline-flex;align-items:center;gap:5px;background:var(--card);
   border:1px solid var(--border);color:var(--muted);font-family:'Outfit',sans-serif;
-  font-size:.85rem;cursor:pointer;padding:7px 14px;border-radius:40px;
+  font-size:.85rem;cursor:pointer;padding:7px 14px;border-radius:20px;
   transition:all .2s;font-weight:500;
 }
-.back-btn:hover{border-color:var(--text);color:var(--text)}
+.back-btn:hover{background:var(--hover);border-color:var(--success);color:var(--text)}
 .back-btn svg{width:16px;height:16px}
-/* Bouton de thème : même rond que dans todo, citations-livres et archipel. */
+/* Bouton de thème : le rond de todo, 40px avec son ombre. */
 .icon-btn{
-  display:grid;place-items:center;width:38px;height:38px;padding:0;flex-shrink:0;
+  display:grid;place-items:center;width:40px;height:40px;padding:0;flex-shrink:0;
   background:var(--card);border:1px solid var(--border);border-radius:50%;
-  color:var(--text);font-size:17px;line-height:1;cursor:pointer;
-  transition:border-color .2s;
+  color:var(--text);font-size:18px;line-height:1;cursor:pointer;
+  box-shadow:var(--shadow);transition:background .2s;
 }
-.icon-btn:hover{border-color:var(--accent)}
+.icon-btn:hover{background:var(--hover)}
 
 /* ── Screens ── */
-.screen{display:none;flex-direction:column;align-items:center;position:relative;z-index:1;
-  width:100%;max-width:640px;margin:0 auto;padding:90px 20px 40px;min-height:100vh;}
+.screen{display:none;flex-direction:column;align-items:center;
+  width:100%;max-width:640px;margin:0 auto;padding:28px 20px 40px;}
 .screen.active{display:flex}
 
 /* ── HOME ── */
 .home-hero{text-align:center;margin-bottom:36px;animation:fadeUp .6s ease}
 .home-hero .emoji{font-size:3.5rem;margin-bottom:12px;display:block}
 .home-hero h1{
-  font-family:'DM Serif Display',serif;font-size:2.8rem;line-height:1.1;
-  background:linear-gradient(135deg,var(--strong) 20%,var(--accent));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px;
+  font-size:2.4rem;font-weight:700;line-height:1.15;
+  color:var(--text);margin-bottom:10px;
 }
 .home-hero p{color:var(--muted);font-size:1.05rem;max-width:400px;margin:0 auto}
 .home-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%;animation:fadeUp .6s ease .1s both}
 .home-card{
-  background:var(--card);border:1px solid var(--border);border-radius:20px;
-  padding:32px 24px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden;
-  display:flex;flex-direction:column;gap:12px;
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:32px 24px;cursor:pointer;transition:border-color .2s;position:relative;overflow:hidden;
+  box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px;
 }
-.home-card:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 12px 40px var(--shadow-hover)}
+/* Le vert entoure : une arête qui s'allume au survol dit « ceci est visé ». */
+.home-card:hover{border-color:var(--success)}
 .home-card .card-icon{font-size:2rem}
-.home-card h2{font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--strong)}
+.home-card h2{font-size:1.2rem;font-weight:700;color:var(--text)}
 .home-card p{font-size:.85rem;color:var(--muted);line-height:1.5}
 .home-card .card-arrow{
   position:absolute;top:20px;right:20px;width:28px;height:28px;border-radius:50%;
@@ -147,19 +146,19 @@ body::before{
   transition:background .2s;
 }
 .home-card:hover .card-arrow{background:var(--accent-20)}
-.home-card .card-arrow svg{width:14px;height:14px;color:var(--accent)}
+.home-card .card-arrow svg{width:14px;height:14px;color:var(--accent-text)}
 
 /* ── CONTINENT PICKER ── */
 .picker-title{
-  font-family:'DM Serif Display',serif;font-size:1.8rem;text-align:center;
-  color:var(--strong);margin-bottom:6px;animation:fadeUp .4s ease;
+  font-size:1.6rem;font-weight:700;text-align:center;
+  color:var(--text);margin-bottom:6px;animation:fadeUp .4s ease;
 }
 .picker-sub{color:var(--muted);text-align:center;margin-bottom:28px;font-size:.95rem;animation:fadeUp .4s ease .05s both}
 .continent-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%}
 .continent-btn{
-  background:var(--card);border:1px solid var(--border);border-radius:16px;
-  padding:20px;cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:14px;
-  animation:fadeUp .4s ease both;
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px;cursor:pointer;transition:border-color .2s;display:flex;align-items:center;gap:14px;
+  box-shadow:var(--shadow);animation:fadeUp .4s ease both;
 }
 .continent-btn:nth-child(1){animation-delay:.05s}
 .continent-btn:nth-child(2){animation-delay:.1s}
@@ -168,37 +167,42 @@ body::before{
 .continent-btn:nth-child(5){animation-delay:.25s}
 .continent-btn:nth-child(6){animation-delay:.3s}
 .continent-btn:nth-child(7){animation-delay:.35s}
-.continent-btn:hover{border-color:var(--accent);transform:translateY(-2px)}
+.continent-btn:hover{border-color:var(--success)}
 .continent-btn .c-icon{font-size:1.6rem;width:40px;text-align:center}
 .continent-btn .c-info{display:flex;flex-direction:column;gap:2px}
-.continent-btn .c-name{font-weight:600;font-size:1rem;color:var(--strong)}
+.continent-btn .c-name{font-weight:600;font-size:1rem;color:var(--text)}
 .continent-btn .c-count{font-size:.78rem;color:var(--muted)}
-.continent-btn.full-width{grid-column:1/-1}
+/* « Tous les pays » : mis en avant par un fond bleuté, pas par une bordure.
+   La bordure reste libre pour dire « ceci est visé » en vert au survol.
+   (C'était un style inline, qui gagnait sur le :hover et bloquait le vert.) */
+.continent-btn.full-width{grid-column:1/-1;background:var(--accent-04)}
+.continent-btn.full-width .c-name{color:var(--accent-text)}
 
 /* ── LIST VIEW ── */
 .list-header{text-align:center;margin-bottom:24px;animation:fadeUp .4s ease}
-.list-header h2{font-family:'DM Serif Display',serif;font-size:1.7rem;color:var(--strong);margin-bottom:4px}
+.list-header h2{font-size:1.5rem;font-weight:700;color:var(--text);margin-bottom:4px}
 .list-header p{color:var(--muted);font-size:.9rem}
 .list-container{
   width:100%;background:var(--card);border:1px solid var(--border);
-  border-radius:20px;overflow:hidden;animation:fadeUp .4s ease .1s both;
+  border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);
+  animation:fadeUp .4s ease .1s both;
 }
 .list-scroll{max-height:60vh;overflow-y:auto}
 .list-scroll::-webkit-scrollbar{width:6px}
 .list-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 .list-table{width:100%;border-collapse:collapse}
 .list-table thead th{
-  text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:1.5px;
+  text-align:left;font-size:.8rem;
   color:var(--muted);font-weight:600;padding:14px 20px;
   border-bottom:1px solid var(--border);background:var(--card);
   position:sticky;top:0;z-index:2;
 }
 .list-table tbody tr{transition:background .15s}
-.list-table tbody tr:hover{background:var(--accent-04)}
+.list-table tbody tr:hover{background:var(--hover)}
 .list-table tbody td{padding:13px 20px;font-size:.92rem;border-bottom:1px solid var(--row-line)}
 .list-table tbody tr:last-child td{border-bottom:none}
-.list-table .country-name{color:var(--strong);font-weight:500}
-.list-table .capital-name{color:var(--accent);font-weight:500}
+.list-table .country-name{color:var(--text);font-weight:500}
+.list-table .capital-name{color:var(--accent-text);font-weight:500}
 
 /* ── QUIZ ── */
 .quiz-area{width:100%;max-width:520px;display:flex;flex-direction:column;align-items:center}
@@ -207,49 +211,51 @@ body::before{
   background:var(--accent-10);border:1px solid var(--accent-20);
   /* --accent2 et non --accent : sur son propre fond teinté, l'accent clair ne
      donnait que 4,35:1 pour un texte de 0,78rem. */
-  padding:6px 16px;border-radius:20px;font-size:.78rem;color:var(--accent2);
-  font-weight:500;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px;
+  padding:6px 16px;border-radius:20px;font-size:.8rem;color:var(--accent2);
+  font-weight:500;margin-bottom:10px;
 }
 .badge .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s ease infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.quiz-title{font-family:'DM Serif Display',serif;font-size:1.5rem;text-align:center;color:var(--strong);margin-bottom:20px}
+.quiz-title{font-size:1.35rem;font-weight:700;text-align:center;color:var(--text);margin-bottom:20px}
 .card{
   width:100%;background:var(--card);border:1px solid var(--border);
-  border-radius:20px;padding:36px 32px;transition:border-color .3s;animation:fadeUp .4s ease;
+  border-radius:var(--radius);padding:36px 32px;box-shadow:var(--shadow);
+  transition:border-color .3s;animation:fadeUp .4s ease;
 }
-.card.correct-flash{border-color:var(--green);box-shadow:0 0 30px var(--ok-tint)}
+.card.correct-flash{border-color:var(--success);box-shadow:0 0 30px var(--ok-tint)}
 .card.wrong-flash{border-color:var(--red);box-shadow:0 0 30px var(--ko-tint)}
-.mode-label{font-size:.73rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-weight:600;margin-bottom:10px}
+.mode-label{font-size:.8rem;color:var(--muted);font-weight:600;margin-bottom:10px}
 .question-text{
-  font-family:'DM Serif Display',serif;font-size:1.8rem;
-  color:var(--strong);line-height:1.3;margin-bottom:28px;min-height:2.4em;display:flex;align-items:center;
+  font-size:1.7rem;font-weight:700;
+  color:var(--text);line-height:1.3;margin-bottom:28px;min-height:2.4em;display:flex;align-items:center;
 }
 .input-row{display:flex;gap:10px;width:100%}
 .input-row input{
-  flex:1;padding:14px 18px;border-radius:14px;border:2px solid var(--border);
-  background:var(--input-bg);color:var(--strong);font-size:1.05rem;
-  font-family:'Outfit',sans-serif;outline:none;transition:border-color .2s;
+  flex:1;padding:12px 14px;border-radius:var(--radius);border:1px solid var(--border);
+  background:var(--input-bg);color:var(--text);font-size:1.05rem;
+  font-family:'Outfit',sans-serif;outline:none;
+  transition:border-color .2s,box-shadow .2s;
 }
-.input-row input:focus{border-color:var(--accent)}
+/* Le bleu agit : le halo de focus reste bleu, le vert n'arrive qu'au verdict. */
+.input-row input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(74,111,165,.12)}
 .input-row input::placeholder{color:var(--muted)}
 .input-row button{
-  padding:14px 22px;border-radius:14px;border:none;
-  background:var(--accent);color:var(--bg);font-weight:700;
+  padding:12px 18px;border-radius:var(--radius);border:none;
+  background:var(--accent);color:#fff;font-weight:600;
   font-size:1rem;cursor:pointer;font-family:'Outfit',sans-serif;
-  transition:transform .15s,background .2s;white-space:nowrap;
+  transition:opacity .2s;white-space:nowrap;
 }
-.input-row button:hover{background:var(--accent2);transform:scale(1.03)}
-.input-row button:active{transform:scale(.97)}
+.input-row button:hover{opacity:.9}
 .feedback{
   margin-top:20px;padding:14px 18px;border-radius:12px;
   font-size:.95rem;font-weight:500;display:none;animation:fadeUp .25s ease;
 }
 .feedback.show{display:block}
-.feedback.ok{background:var(--ok-tint);border:1px solid var(--ok-line);color:var(--green)}
+.feedback.ok{background:var(--ok-tint);border:1px solid var(--ok-line);color:var(--success)}
 .feedback.ko{background:var(--ko-tint);border:1px solid var(--ko-line);color:var(--red)}
 .quit-btn{
-  margin-top:14px;padding:10px 24px;border-radius:12px;
-  border:1px solid var(--border);background:transparent;
+  margin-top:14px;padding:10px 24px;border-radius:10px;
+  border:1px solid var(--border);background:var(--card);
   color:var(--muted);font-size:.9rem;font-family:'Outfit',sans-serif;
   cursor:pointer;transition:all .2s;font-weight:500;
 }
@@ -260,57 +266,59 @@ body::before{
 .results-screen.show{display:flex}
 .results-header{text-align:center}
 .results-header h2{
-  font-family:'DM Serif Display',serif;font-size:1.8rem;
-  background:linear-gradient(135deg,var(--strong) 30%,var(--accent));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px;
+  font-size:1.6rem;font-weight:700;color:var(--text);margin-bottom:6px;
 }
 .results-header p{color:var(--muted);font-size:.95rem}
 .results-card{
   width:100%;background:var(--card);border:1px solid var(--border);
-  border-radius:20px;padding:4px;max-height:50vh;overflow-y:auto;
+  border-radius:var(--radius);padding:4px;max-height:50vh;overflow-y:auto;
+  box-shadow:var(--shadow);
 }
 .results-card::-webkit-scrollbar{width:6px}
 .results-card::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 .results-table{width:100%;border-collapse:collapse}
 .results-table th{
-  text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:1px;
+  text-align:left;font-size:.8rem;
   color:var(--muted);font-weight:600;padding:10px 16px;border-bottom:1px solid var(--border);
 }
 .results-table td{padding:12px 16px;font-size:.9rem;border-bottom:1px solid var(--row-line)}
 .results-table tr:last-child td{border-bottom:none}
 .results-table .your-answer{color:var(--red);font-weight:500}
-.results-table .correct-answer{color:var(--green);font-weight:500}
-.results-perfect{text-align:center;padding:40px 20px;color:var(--green);font-size:1.1rem}
+.results-table .correct-answer{color:var(--success);font-weight:500}
+.results-perfect{text-align:center;padding:40px 20px;color:var(--success);font-size:1.1rem}
 .action-btn{
-  padding:14px 32px;border-radius:14px;border:none;
-  background:var(--accent);color:var(--bg);font-weight:700;
+  padding:12px 18px;border-radius:var(--radius);border:none;
+  background:var(--accent);color:#fff;font-weight:600;
   font-size:1rem;cursor:pointer;font-family:'Outfit',sans-serif;
-  transition:transform .15s,background .2s;
+  transition:opacity .2s;
 }
-.action-btn:hover{background:var(--accent2);transform:scale(1.03)}
+.action-btn:hover{opacity:.9}
+/* Bouton secondaire de todo : fond carte, bordure neutre, l'accent n'arrive
+   qu'au survol. */
 .home-btn{
-  padding:14px 28px;border-radius:14px;border:1px solid var(--accent);
-  background:transparent;color:var(--accent);font-weight:600;
-  font-size:1rem;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .2s;
+  padding:12px 18px;border-radius:var(--radius);border:1px solid var(--border);
+  background:var(--card);color:var(--muted);font-weight:600;
+  font-size:1rem;cursor:pointer;font-family:'Outfit',sans-serif;
+  transition:background .15s,color .15s,border-color .15s;
 }
-.home-btn:hover{background:var(--accent-10)}
+.home-btn:hover{background:var(--hover);color:var(--text);border-color:var(--success)}
 
 .streak{
   position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
   display:flex;align-items:center;gap:8px;
   background:var(--card);border:1px solid var(--border);
-  padding:8px 20px;border-radius:30px;font-size:.85rem;color:var(--muted);
-  z-index:100;transition:opacity .3s;
+  padding:8px 20px;border-radius:20px;font-size:.85rem;color:var(--muted);
+  box-shadow:var(--shadow);z-index:100;transition:opacity .3s;
 }
-.streak .fire{font-size:1.1rem}.streak .num{color:var(--accent);font-weight:700}
+.streak .fire{font-size:1.1rem}.streak .num{color:var(--accent-text);font-weight:700}
 
 @media(max-width:560px){
-  .home-hero h1{font-size:2rem}
+  .home-hero h1{font-size:1.9rem}
   .home-cards{grid-template-columns:1fr}
   .continent-grid{grid-template-columns:1fr}
   .continent-btn.full-width{grid-column:auto}
   .question-text{font-size:1.4rem}
-  .card{padding:28px 20px;border-radius:16px}
+  .card{padding:28px 20px}
   .input-row{flex-direction:column}
   .input-row button{width:100%}
   .results-table th,.results-table td{padding:10px 10px;font-size:.82rem}
@@ -322,8 +330,6 @@ body::before{
 <!-- Le thème est appliqué avant le premier rendu, sinon la page clignoterait
      avant de basculer. Clair par défaut, comme les autres projets. -->
 <script>if(localStorage.getItem("capitales_theme")==="dark")document.body.classList.add("dark");</script>
-
-<div class="globe-bg"></div>
 
 <!-- TOP BAR -->
 <div class="top-bar" id="topBar">
@@ -396,7 +402,7 @@ body::before{
     <div class="quiz-title" id="quizTitle">Quiz</div>
     <div class="card" id="card">
       <div class="mode-label" id="modeLabel">Trouve la capitale de…</div>
-      <div class="question-text" id="questionText">—</div>
+      <div class="question-text" id="questionText">…</div>
       <div class="input-row">
         <input type="text" id="answerInput" placeholder="Ta réponse…" autocomplete="off" spellcheck="false">
         <button id="submitBtn">Valider</button>
@@ -428,7 +434,7 @@ body::before{
 
 <script>
 // ═══════════════════════════════
-//  DATA — 198 countries
+//  DATA : 198 countries
 // ═══════════════════════════════
 const CONTINENTS = {
   "Europe": {icon:"🐓", data:[
@@ -571,7 +577,7 @@ function showPicker(intent){
     sub.textContent='Choisis un continent pour voir ses pays et capitales.';
   } else {
     title.textContent='Choisis ton quiz';
-    sub.textContent='Un continent ou le monde entier — à toi de jouer !';
+    sub.textContent='Un continent ou le monde entier, à toi de jouer !';
   }
 
   let html='';
@@ -584,9 +590,9 @@ function showPicker(intent){
     </div>`;
   });
   if(intent==='quiz'){
-    html+=`<div class="continent-btn full-width" onclick="startQuiz('all')" style="border-color:var(--accent-30);background:var(--accent-04)">
+    html+=`<div class="continent-btn full-width" onclick="startQuiz('all')">
       <div class="c-icon">🗺️</div>
-      <div class="c-info"><span class="c-name" style="color:var(--accent)">Tous les pays</span><span class="c-count">${ALL_DATA.length} pays — mode expert</span></div>
+      <div class="c-info"><span class="c-name">Tous les pays</span><span class="c-count">${ALL_DATA.length} pays, mode expert</span></div>
     </div>`;
   }
   grid.innerHTML=html;
@@ -626,7 +632,7 @@ function startQuiz(key){
   const label=key==='all'?'Tous les pays':key;
   document.getElementById('quizBadge').textContent=label;
   document.getElementById('quizTitle').textContent=
-    key==='all'?'Quiz Global — '+ALL_DATA.length+' pays':'Quiz '+key;
+    key==='all'?'Quiz Global, '+ALL_DATA.length+' pays':'Quiz '+key;
 
   document.getElementById('goodCount').textContent='0';
   document.getElementById('totalCount').textContent='0';
@@ -764,7 +770,7 @@ function quitQuiz(){
     finished&&pct===100?'Parfait !':(pct>=80?'Bravo !':pct>=50?'Pas mal !':"Continue à t'entraîner !");
   document.getElementById('resultsSummary').textContent=
     good+' bonne'+(good>1?'s':'')+' réponse'+(good>1?'s':'')+' sur '+total+' ('+pct+'%)'
-    +(finished?' — Quiz terminé !':'');
+    +(finished?'. Quiz terminé !':'');
 
   renderResultsBody();
 }
