@@ -70,7 +70,7 @@ body{
 }
 body{
   font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);
-  min-height:100vh;
+  line-height:1.5;min-height:100vh;
 }
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
@@ -89,6 +89,10 @@ body{
   font-family:'Newsreader',Georgia,serif;font-variation-settings:'opsz' 40;
   font-size:1.15rem;font-weight:600;color:var(--accent-text);
   cursor:pointer;letter-spacing:.5px;
+  /* line-height explicite, sinon c'est la fonte EMOJI qui fixe la hauteur de
+     la ligne : son ascendante depasse celle du texte et pousse le titre vers
+     le bas, d'une valeur qui varie d'une app a l'autre. */
+  line-height: 1.3;
 }
 .top-right{display:flex;align-items:center;gap:10px}
 .score-display{
@@ -895,7 +899,12 @@ document.addEventListener('keydown', function(e){
   const enQuiz = document.getElementById('screenQuiz').classList.contains('active')
               && !document.getElementById('resultsScreen').classList.contains('show');
 
-  if((e.key === 'Backspace' || e.key === 'Delete') && !enSaisie){
+  // Echap revient en arriere MEME pendant la saisie : c'est la seule touche
+  // qui le peut, puisque dans le champ de reponse Retour arriere efface une
+  // lettre. Sans elle, on ne pouvait pas quitter un quiz au clavier.
+  const retour = e.key === 'Escape'
+              || ((e.key === 'Backspace' || e.key === 'Delete') && !enSaisie);
+  if(retour){
     if(!document.getElementById('screenHome').classList.contains('active')){
       e.preventDefault();
       goBack();
