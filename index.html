@@ -125,7 +125,14 @@ body{
   width:100%;max-width:640px;margin:0 auto;padding:32px 20px 40px;}
 .screen.active{display:flex}
 
-/* ── HOME ── */
+/* ── HOME ──
+   Seul écran plus large que le gabarit commun de 640. Trois cartes côte à côte
+   dans 640 ne laisseraient que 141 px de texte par carte : les descriptions
+   passeraient sur trois lignes et l'accueil perdrait son air. À 900, chaque
+   carte fait 276 px, dont 228 de texte, et les trois phrases tiennent sur deux
+   lignes comme avant. Le héros, lui, est centré et son paragraphe plafonne à
+   400 px : il ne bouge pas. */
+#screenHome{max-width:900px}
 .home-hero{text-align:center;margin-bottom:36px;animation:fadeUp .6s ease}
 .home-hero .emoji{font-size:3.5rem;margin-bottom:12px;display:block}
 .home-hero h1{
@@ -133,14 +140,25 @@ body{
   color:var(--text);margin-bottom:10px;
 }
 .home-hero p{color:var(--muted);font-size:1.05rem;max-width:400px;margin:0 auto}
-.home-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%;animation:fadeUp .6s ease .1s both}
+.home-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;width:100%;animation:fadeUp .6s ease .1s both}
 .home-card{
   background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
   padding:32px 24px;cursor:pointer;position:relative;overflow:hidden;
   box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px;
+  /* La carte externe est un vrai <a> (clic molette, Ctrl+clic, destination
+     lisible dans la barre d'état) : il faut donc lui retirer le soulignement
+     et la couleur de lien visité. Sans effet sur les deux <div>. */
+  text-decoration:none;color:inherit;
 }
 /* Le vert entoure : une arête qui s'allume au survol dit « ceci est visé ». */
 .home-card:hover{border-color:var(--success);box-shadow:0 0 0 1px var(--success),var(--shadow)}
+/* Le lien externe est le seul élément de l'app naturellement atteignable au
+   Tab. Son halo de focus reprend celui du survol et de `.is-nav` : il ne doit
+   y avoir qu'une seule façon de dire « c'est celui-là ». */
+.home-card:focus-visible{
+  outline:none;border-color:var(--success);
+  box-shadow:0 0 0 1px var(--success),var(--shadow);
+}
 .home-card .card-icon{font-size:2rem}
 .home-card h2{font-size:1.2rem;font-weight:700;color:var(--text)}
 .home-card p{font-size:.85rem;color:var(--muted);line-height:1.5}
@@ -327,9 +345,19 @@ body{
 }
 .streak .fire{font-size:1.1rem}.streak .num{color:var(--accent-text);font-weight:700}
 
+/* Palier propre à l'accueil, distinct des 560 px du reste de l'app : entre
+   560 et 760, trois colonnes ne laisseraient que 115 px de texte par carte.
+   On empile avant d'en arriver là.
+   Empilées, les cartes ne doivent PAS prendre les 900 px de l'accueil : une
+   carte de 720 px pour trois mots et une ligne de texte est une bande plate.
+   On les ramène donc à une colonne centrée de 420. Sous 560, ce plafond est
+   déjà plus large que l'écran : il ne gêne pas le rendu mobile. */
+@media(max-width:760px){
+  .home-cards{grid-template-columns:1fr;max-width:420px;margin:0 auto}
+}
+
 @media(max-width:560px){
   .home-hero h1{font-size:1.9rem}
-  .home-cards{grid-template-columns:1fr}
   .continent-grid{grid-template-columns:1fr}
   .continent-btn.full-width{grid-column:auto}
   .question-text{font-size:1.4rem}
@@ -384,6 +412,24 @@ body{
       <h2>Quiz</h2>
       <p>Teste-toi sur un continent ou sur les 198 pays du monde.</p>
     </div>
+    <!-- Troisième et dernière du DOM, et ce n'est pas un détail de mise en
+         page : `resetNav()` vise toujours le premier `[data-nav]` de l'écran.
+         Placée en tête, l'accueil s'ouvrirait sur « quitter l'app » et la
+         première pression sur Entrée ferait sortir du site.
+         `noopener` empêche la page ouverte de reprendre la main sur cet
+         onglet-ci via `window.opener` ; `noreferrer` évite d'annoncer à un
+         tiers d'où viennent les visiteurs. -->
+    <a class="home-card" data-nav
+       href="https://www.geoguessr.com/fr/quiz/seterra"
+       target="_blank" rel="noopener noreferrer"
+       title="Ouvre geoguessr.com dans un nouvel onglet">
+      <!-- Flèche sortante, et non le « → » des deux autres : dans cette app,
+           « → » veut dire « écran suivant, tu restes ici ». -->
+      <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><path d="M10 14 21 3"/></svg></div>
+      <div class="card-icon">🗺️</div>
+      <h2>Carte</h2>
+      <p>Place les pays et les capitales sur une carte, sur Seterra.</p>
+    </a>
   </div>
 </div>
 
