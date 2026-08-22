@@ -143,7 +143,10 @@ body{
 .home-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;width:100%;animation:fadeUp .6s ease .1s both}
 .home-card{
   background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
-  padding:32px 24px;cursor:pointer;overflow:hidden;
+  /* 24 px en haut et non 32 : l'icone se retrouve au meme retrait du bord
+     haut que du bord gauche. En bas on garde 32, le contenu est cale en haut
+     et le reste de la carte est de toute facon du vide. */
+  padding:24px 24px 32px;cursor:pointer;overflow:hidden;
   box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px;
   /* La carte externe est un vrai <a> (clic molette, Ctrl+clic, destination
      lisible dans la barre d'état) : il faut donc lui retirer le soulignement
@@ -166,17 +169,22 @@ body{
    tout seul — pas de `top` calcule a la main qui casserait si la taille de
    l'icone changeait. */
 .home-card .card-head{display:flex;align-items:center;justify-content:space-between}
-.home-card .card-icon{font-size:2rem}
-/* Le logo de la carte externe. `vertical-align:middle` et non `display:block` :
-   les deux autres cartes ont un emoji a 2rem, dont la ligne fait 48 px de haut.
-   Un SVG en bloc aurait ramene cette boite a 30 px et fait remonter le titre et
-   le texte de la troisieme carte par rapport aux deux autres. En inline, la
-   hauteur de ligne reste celle de la police et le rythme vertical est le meme
-   partout.
+/* line-height:1 : herite du 1,5 du body, l'emoji de 32 px vivait dans une
+   ligne de 48, soit 8 px de vide mort au-dessus et autant en dessous. La
+   ligne icone/fleche s'en trouvait poussee vers le bas sans raison.
+   Hauteur imposee a 32 px, et non laissee au contenu : l'emoji des deux
+   premieres cartes fait 32 px, le logo de la troisieme 30. Sans ce plancher,
+   la boite de la troisieme montait a 35,4 px — un inline-block aligne en
+   `middle` descend sous la ligne de base et fait grandir la ligne — et son
+   titre demarrait 3 px plus bas que celui des deux autres. */
+.home-card .card-icon{font-size:2rem;line-height:1;height:32px;display:flex;align-items:center}
+/* Le logo de la carte externe. En bloc : c'est la hauteur fixe de .card-icon
+   qui garantit desormais le rythme vertical, l'alignement inline n'a plus a
+   s'en charger et il vaut mieux qu'il ne s'en mele pas.
    Une tuile pleine pese plus lourd qu'un emoji a taille egale, qui lui ne
    remplit pas son cadre : 30 px lui donnent la meme presence optique que 32 px
    d'emoji. */
-.card-icon .logo-seterra{width:30px;height:30px;vertical-align:middle}
+.card-icon .logo-seterra{width:30px;height:30px;display:block}
 /* En mode sombre, le bleu nuit du logo (#17295B) et le fond de carte (#131b2e)
    ne sont qu'a 1,2:1 : le bord de la tuile disparait et le S dore flotte sur
    la carte. Un filet reprend le trace, avec le meme gris que --row-line. */
@@ -458,7 +466,7 @@ body.dark .card-icon .logo-seterra{border-radius:7px;box-shadow:0 0 0 1px rgba(2
         <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><path d="M10 14 21 3"/></svg></div>
       </div>
       <h2>Carte</h2>
-      <p>Place les pays et les capitales sur une carte, sur Seterra.</p>
+      <p>Placer les pays sur une carte en fonction de leurs noms, leurs capitales ou leurs drapeaux.</p>
     </a>
   </div>
 </div>
