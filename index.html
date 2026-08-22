@@ -143,7 +143,7 @@ body{
 .home-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;width:100%;animation:fadeUp .6s ease .1s both}
 .home-card{
   background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
-  padding:32px 24px;cursor:pointer;position:relative;overflow:hidden;
+  padding:32px 24px;cursor:pointer;overflow:hidden;
   box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px;
   /* La carte externe est un vrai <a> (clic molette, Ctrl+clic, destination
      lisible dans la barre d'état) : il faut donc lui retirer le soulignement
@@ -159,6 +159,13 @@ body{
   outline:none;border-color:var(--success);
   box-shadow:0 0 0 1px var(--success),var(--shadow);
 }
+/* Icone et fleche sur une seule ligne, l'une a gauche, l'autre a droite.
+   La fleche etait posee en absolu a 20 px du haut, l'icone commencait a 32 px
+   (le padding de la carte) : les deux ne pouvaient pas s'aligner. Elles
+   partagent maintenant une ligne flex, et `align-items:center` fait le calage
+   tout seul — pas de `top` calcule a la main qui casserait si la taille de
+   l'icone changeait. */
+.home-card .card-head{display:flex;align-items:center;justify-content:space-between}
 .home-card .card-icon{font-size:2rem}
 /* Le logo de la carte externe. `vertical-align:middle` et non `display:block` :
    les deux autres cartes ont un emoji a 2rem, dont la ligne fait 48 px de haut.
@@ -177,7 +184,7 @@ body.dark .card-icon .logo-seterra{border-radius:7px;box-shadow:0 0 0 1px rgba(2
 .home-card h2{font-size:1.2rem;font-weight:700;color:var(--text)}
 .home-card p{font-size:.85rem;color:var(--muted);line-height:1.5}
 .home-card .card-arrow{
-  position:absolute;top:20px;right:20px;width:28px;height:28px;border-radius:50%;
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
   background:var(--accent-10);display:flex;align-items:center;justify-content:center;
   transition:background .2s;
 }
@@ -415,14 +422,18 @@ body.dark .card-icon .logo-seterra{border-radius:7px;box-shadow:0 0 0 1px rgba(2
   </div>
   <div class="home-cards">
     <div class="home-card" data-nav onclick="showPicker('list')">
-      <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-      <div class="card-icon">📖</div>
+      <div class="card-head">
+        <div class="card-icon">📖</div>
+        <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      </div>
       <h2>Explorer</h2>
       <p>Parcours la liste des pays et capitales par continent.</p>
     </div>
     <div class="home-card" data-nav onclick="showPicker('quiz')">
-      <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-      <div class="card-icon">🧠</div>
+      <div class="card-head">
+        <div class="card-icon">🧠</div>
+        <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      </div>
       <h2>Quiz</h2>
       <p>Teste-toi sur un continent ou sur les 198 pays du monde.</p>
     </div>
@@ -437,13 +448,15 @@ body.dark .card-icon .logo-seterra{border-radius:7px;box-shadow:0 0 0 1px rgba(2
        href="https://www.geoguessr.com/fr/quiz/seterra"
        target="_blank" rel="noopener noreferrer"
        title="Ouvre geoguessr.com dans un nouvel onglet">
-      <!-- Flèche sortante, et non le « → » des deux autres : dans cette app,
-           « → » veut dire « écran suivant, tu restes ici ». -->
-      <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><path d="M10 14 21 3"/></svg></div>
-      <!-- Logo Seterra redessine en SVG inline. Le projet n'a aucun asset
-           externe hors favicons : un <img> vers geoguessr aurait ajoute une
-           requete reseau et une deuxieme URL susceptible de casser. -->
-      <div class="card-icon"><svg class="logo-seterra" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="15" fill="#17295B"/><path d="M45 21C43 15 32 12 25 16c-7 4-6 10 2 13 8 3 17 6 18 12 1 7-9 12-17 9-5-2-7-5-7-8" fill="none" stroke="#E9C21F" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="card-head">
+        <!-- Logo Seterra redessine en SVG inline. Le projet n'a aucun asset
+             externe hors favicons : un <img> vers geoguessr aurait ajoute une
+             requete reseau et une deuxieme URL susceptible de casser. -->
+        <div class="card-icon"><svg class="logo-seterra" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="15" fill="#17295B"/><path d="M45 21C43 15 32 12 25 16c-7 4-6 10 2 13 8 3 17 6 18 12 1 7-9 12-17 9-5-2-7-5-7-8" fill="none" stroke="#E9C21F" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <!-- Flèche sortante, et non le « → » des deux autres : dans cette app,
+             « → » veut dire « écran suivant, tu restes ici ». -->
+        <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><path d="M10 14 21 3"/></svg></div>
+      </div>
       <h2>Carte</h2>
       <p>Place les pays et les capitales sur une carte, sur Seterra.</p>
     </a>
