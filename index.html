@@ -160,6 +160,20 @@ body{
   box-shadow:0 0 0 1px var(--success),var(--shadow);
 }
 .home-card .card-icon{font-size:2rem}
+/* Le logo de la carte externe. `vertical-align:middle` et non `display:block` :
+   les deux autres cartes ont un emoji a 2rem, dont la ligne fait 48 px de haut.
+   Un SVG en bloc aurait ramene cette boite a 30 px et fait remonter le titre et
+   le texte de la troisieme carte par rapport aux deux autres. En inline, la
+   hauteur de ligne reste celle de la police et le rythme vertical est le meme
+   partout.
+   Une tuile pleine pese plus lourd qu'un emoji a taille egale, qui lui ne
+   remplit pas son cadre : 30 px lui donnent la meme presence optique que 32 px
+   d'emoji. */
+.card-icon .logo-seterra{width:30px;height:30px;vertical-align:middle}
+/* En mode sombre, le bleu nuit du logo (#17295B) et le fond de carte (#131b2e)
+   ne sont qu'a 1,2:1 : le bord de la tuile disparait et le S dore flotte sur
+   la carte. Un filet reprend le trace, avec le meme gris que --row-line. */
+body.dark .card-icon .logo-seterra{border-radius:7px;box-shadow:0 0 0 1px rgba(226,232,240,.14)}
 .home-card h2{font-size:1.2rem;font-weight:700;color:var(--text)}
 .home-card p{font-size:.85rem;color:var(--muted);line-height:1.5}
 .home-card .card-arrow{
@@ -426,7 +440,10 @@ body{
       <!-- Flèche sortante, et non le « → » des deux autres : dans cette app,
            « → » veut dire « écran suivant, tu restes ici ». -->
       <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><path d="M10 14 21 3"/></svg></div>
-      <div class="card-icon">🗺️</div>
+      <!-- Logo Seterra redessine en SVG inline. Le projet n'a aucun asset
+           externe hors favicons : un <img> vers geoguessr aurait ajoute une
+           requete reseau et une deuxieme URL susceptible de casser. -->
+      <div class="card-icon"><svg class="logo-seterra" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="15" fill="#17295B"/><path d="M45 21C43 15 32 12 25 16c-7 4-6 10 2 13 8 3 17 6 18 12 1 7-9 12-17 9-5-2-7-5-7-8" fill="none" stroke="#E9C21F" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h2>Carte</h2>
       <p>Place les pays et les capitales sur une carte, sur Seterra.</p>
     </a>
